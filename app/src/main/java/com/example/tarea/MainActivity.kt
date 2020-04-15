@@ -1,14 +1,16 @@
 package com.example.tarea
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var button1: Button
@@ -22,8 +24,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var button9: Button
     private var clicables = Array(10){false}
     private var turno: Boolean = true
+    private var turn: Int = 1
     private var pos: Int = 0
-    private var fin:Boolean = false
 
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,102 +43,79 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        init()
         button1.setOnClickListener{
-            clicables[1]=true
-            if(turno) {
-                button1.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button1.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 1)
         }
         button2.setOnClickListener{
-            clicables[2]=true
-            if(turno) {
-                button2.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button2.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 2)
         }
 
         button3.setOnClickListener{
-            clicables[3]=true
-            if(turno) {
-
-                button3.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button3.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 3)
         }
         button4.setOnClickListener{
-            clicables[4]=true
-            if(turno) {
-
-                button4.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button4.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 4)
         }
         button5.setOnClickListener{
-            clicables[5]=true
-            if(turno) {
-                button5.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button5.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 5)
         }
         button6.setOnClickListener{
-            clicables[6]=true
-            if(turno) {
-                button6.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button6.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 6)
         }
         button7.setOnClickListener{
-            clicables[7]=true
-            if(turno) {
-
-                button7.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button7.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 7)
         }
         button8.setOnClickListener{
-            clicables[8]=true
-            if(turno) {
-                button8.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button8.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 8)
         }
         button9.setOnClickListener{
-            clicables[9]=true
-            if(turno) {
-                button9.setBackgroundColor(0xFF00FF00.toInt())
-                playerBTurn(randomizer())
-            }
-            else
-                button9.setBackgroundColor(0xFFFF0000.toInt())
-            turno = !turno
+            onClick(it, 9)
         }
 
     }
+
+    fun init(){
+        for(i in 1..9)
+        {
+            var button = switch(i)
+                button!!.setBackgroundColor(0xFF0000FF.toInt())
+            button!!.isClickable=true
+            pos=0
+            turn=1
+            turno=true
+        }
+    }
+
+    fun onClick(button: View, pos:Int){
+        Log.d("Uh", "$turn")
+        button.isClickable = false
+        turn++
+        if(turno) {
+            button.setBackgroundColor(0xFFFF0000.toInt())
+
+            if(turn >= 5)
+                isEnd(pos)
+            turno = !turno
+            playerBTurn(randomizer())
+        }
+        else
+            button.setBackgroundColor(0xFF00FF00.toInt())
+    }
+
+    private val listener =
+        View.OnClickListener {
+
+            clicables[3]=true
+            if(turno){
+                button3.setBackgroundColor(0xFF00FF00.toInt())
+                turno = !turno
+            }
+            else
+                button3.setBackgroundColor(0xFFFF0000.toInt())
+        }
+
+
 
     override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onPostCreate(savedInstanceState, persistentState)
@@ -151,37 +130,210 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun isEnd(pos: Int){
+        var msg = ""
+        if(turno)
+            msg= "Gano jugador rojo"
+        else
+            msg= "Gano jugador verde"
+        checkDraw()
+        checkHorizontal(pos, msg)
+        checkVertical(pos, msg)
+        checkDiagonal(pos, msg)
+    }
+
+
+
+
+    fun checkHorizontal(pos:Int, msg:String){
+        if(pos == 1 || pos == 4 || pos == 7)
+        {
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos+1)!!.background as ColorDrawable
+            var c = switch(pos+2)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color )
+            {
+                showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+
+            Log.d("Uh", "${a.color} y ${b.color}")
+        }
+        else if( pos == 2 || pos == 5 || pos == 8){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos-1)!!.background as ColorDrawable
+            var c = switch(pos+1)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+                {showWinner(msg)
+                    Log.d("Uh", "Gano")
+                }
+        }
+        else if( pos == 3 || pos == 6 || pos == 9){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos-1)!!.background as ColorDrawable
+            var c = switch(pos-2)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+                {showWinner(msg)
+                    Log.d("Uh", "Gano")
+                }
+        }
+    }
+    fun checkVertical(pos:Int, msg:String){
+        if(pos == 1 || pos == 2 || pos == 3)
+        {
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos+3)!!.background as ColorDrawable
+            var c = switch(pos+6)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color )
+            {
+                showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+
+            Log.d("Uh", "${a.color} y ${b.color}")
+        }
+        else if( pos == 4 || pos == 5 || pos == 6){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos-3)!!.background as ColorDrawable
+            var c = switch(pos+3)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+        }
+        else if( pos == 7 || pos == 8 || pos == 9){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos-3)!!.background as ColorDrawable
+            var c = switch(pos-6)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+        }
+    }
+
+    fun checkDiagonal(pos:Int, msg:String){
+        if(pos == 1){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos+4)!!.background as ColorDrawable
+            var c = switch(pos+8)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+        }
+        else if(pos == 5){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos+4)!!.background as ColorDrawable
+            var c = switch(pos-4)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+            a = switch(pos)!!.background as ColorDrawable
+            b  = switch(pos+2)!!.background as ColorDrawable
+            c = switch(pos-2)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+
+
+        }
+        else if(pos == 3){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos+2)!!.background as ColorDrawable
+            var c = switch(pos+4)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+        }
+        else if(pos == 7){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos-2)!!.background as ColorDrawable
+            var c = switch(pos-4)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+        }
+        else if(pos == 9){
+            var a = switch(pos)!!.background as ColorDrawable
+            var b  = switch(pos-4)!!.background as ColorDrawable
+            var c = switch(pos-8)!!.background as ColorDrawable
+            if(a.color == b.color &&  a.color == c.color)
+            {showWinner(msg)
+                Log.d("Uh", "Gano")
+            }
+        }
+    }
+
+    fun checkDraw(){
+        if( turn == 9)
+            showWinner("Empate")
+    }
+
+
+
+    fun showWinner(msg:String) {
+        val builder = AlertDialog.Builder(this) // Builder needs a context
+        builder.setTitle(msg)
+        builder.setMessage("Gracias por participar")
+        builder.setPositiveButton("Reiniciar"){dialog, which ->
+            init()
+        }
+        builder.show()
+
+    }
 
 
 
     fun randomizer(): Int{
         var rnd = (1..9).random()
-        while(clicables[rnd])
-            rnd = (1..9).random()
+        if(turn < 9) {
+            while (!switch(rnd)!!.isClickable)
+                rnd = (1..9).random()
+        }else
+            rnd = 0
 
         return rnd
     }
 
     fun playerBTurn(pos:Int){
-            if(pos == 1)
-                button1.callOnClick()
-            if(pos == 2)
-                button2.callOnClick()
-            if(pos == 3)
-                button3.callOnClick()
-            if(pos == 4)
-                button4.callOnClick()
-            if(pos == 5)
-                button5.callOnClick()
-            if(pos == 6)
-                button6.callOnClick()
-            if(pos == 7)
-                button7.callOnClick()
-            if(pos == 8)
-                button8.callOnClick()
-            if(pos == 9)
-                button9.callOnClick()
 
+        val a = switch(pos)
+        if(a !== null)
+        {a.callOnClick()
+        a.isClickable = false
+            if (turn>=5)
+        isEnd(pos)
+            turno = !turno}
+
+
+    }
+
+    fun switch(pos: Int): Button? {
+        var but: Button? = null
+        if(pos == 1)
+            but= button1
+        if(pos == 2)
+            but= button2
+        if(pos == 3)
+            but= button3
+        if(pos == 4)
+            but= button4
+        if(pos == 5)
+            but= button5
+        if(pos == 6)
+            but= button6
+        if(pos == 7)
+            but= button7
+        if(pos == 8)
+            but= button8
+        if(pos == 9)
+            but= button9
+        return but
     }
 
     fun jugar(){
