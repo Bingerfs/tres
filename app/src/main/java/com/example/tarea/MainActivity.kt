@@ -9,6 +9,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 
 class MainActivity : AppCompatActivity() {
     lateinit var button1: Button
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var button7: Button
     lateinit var button8: Button
     lateinit var button9: Button
-    private var clicables = Array(10){false}
+    private var clicables = Array(10){0}
     private var turno: Boolean = true
     private var pos: Int = 0
     private var fin:Boolean = false
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
 
         button1.setOnClickListener{
-            clicables[1]=true
+            clicables[1]=1
             if(turno) {
                 button1.setBackgroundColor(0xFF00FF00.toInt())
                 playerBTurn(randomizer())
@@ -52,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button2.setOnClickListener{
-            clicables[2]=true
+            clicables[2]=1
             if(turno) {
                 button2.setBackgroundColor(0xFF00FF00.toInt())
                 playerBTurn(randomizer())
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         button3.setOnClickListener{
-            clicables[3]=true
+            clicables[3]=1
             if(turno) {
 
                 button3.setBackgroundColor(0xFF00FF00.toInt())
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button4.setOnClickListener{
-            clicables[4]=true
+            clicables[4]=1
             if(turno) {
 
                 button4.setBackgroundColor(0xFF00FF00.toInt())
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button5.setOnClickListener{
-            clicables[5]=true
+            clicables[5]=1
             if(turno) {
                 button5.setBackgroundColor(0xFF00FF00.toInt())
                 playerBTurn(randomizer())
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button6.setOnClickListener{
-            clicables[6]=true
+            clicables[6]=1
             if(turno) {
                 button6.setBackgroundColor(0xFF00FF00.toInt())
                 playerBTurn(randomizer())
@@ -105,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button7.setOnClickListener{
-            clicables[7]=true
+            clicables[7]=1
             if(turno) {
 
                 button7.setBackgroundColor(0xFF00FF00.toInt())
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button8.setOnClickListener{
-            clicables[8]=true
+            clicables[8]=1
             if(turno) {
                 button8.setBackgroundColor(0xFF00FF00.toInt())
                 playerBTurn(randomizer())
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             turno = !turno
         }
         button9.setOnClickListener{
-            clicables[9]=true
+            clicables[9]=1
             if(turno) {
                 button9.setBackgroundColor(0xFF00FF00.toInt())
                 playerBTurn(randomizer())
@@ -135,6 +136,7 @@ class MainActivity : AppCompatActivity() {
                 button9.setBackgroundColor(0xFFFF0000.toInt())
             turno = !turno
         }
+        jugar()
 
     }
 
@@ -156,10 +158,10 @@ class MainActivity : AppCompatActivity() {
 
     fun randomizer(): Int{
         var rnd = (1..9).random()
-        while(clicables[rnd])
+        while(clicables[rnd]!=0)
             rnd = (1..9).random()
 
-        return rnd
+        return 1
     }
 
     fun playerBTurn(pos:Int){
@@ -184,6 +186,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun isWinner(): Int {
+
+        if( clicables[1]==clicables[2] && clicables[2]== clicables[3])
+            return clicables[1]
+        if( clicables[4]==clicables[5] && clicables[5]== clicables[6])
+            return clicables[4]
+        if( clicables[7]==clicables[8] && clicables[8]== clicables[9])
+            return clicables[7]
+        if( clicables[1]==clicables[4] && clicables[4]== clicables[7])
+            return clicables[1]
+        if( clicables[2]==clicables[5] && clicables[5]== clicables[8])
+            return clicables[2]
+        if( clicables[3]==clicables[6] && clicables[6]== clicables[9])
+            return clicables[3]
+        if( clicables[3]==clicables[5] && clicables[5]== clicables[7])
+            return clicables[3]
+        if( clicables[1]==clicables[5] && clicables[5]== clicables[9])
+            return clicables[1]
+        return 0
+
+
+    }
+
     fun jugar(){
 
             if(!turno){
@@ -191,9 +216,22 @@ class MainActivity : AppCompatActivity() {
             }
 
     }
+    fun showWinner() {
+        val builder = AlertDialog.Builder(this) // Builder needs a context
+        builder.setTitle("Ganador!!!")
+        builder.setMessage("Gracias por participar")
+        builder.setPositiveButton("Reiniciar"){dialog, which ->
+            reset()
+        }
+    }
 
+    fun reset(){
+        //reset values
+    }
 
 
 
 
 }
+
+
